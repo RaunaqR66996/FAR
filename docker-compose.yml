@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  far-api:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./src:/app/src
+      - ./data:/app/data
+    command: uvicorn far.api.server:app --host 0.0.0.0 --port 8000 --reload
+    environment:
+      - PYTHONPATH=/app/src
+
+  far-ui:
+    build: .
+    ports:
+      - "7860:7860"
+    volumes:
+      - ./src:/app/src
+    command: python src/far/ui/app.py
+    environment:
+      - API_URL=http://far-api:8000
+    depends_on:
+      - far-api
